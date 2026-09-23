@@ -1,4 +1,4 @@
-import { BubbleGame, COLORS, COLS, DIFFICULTIES, MAX_LEVELS } from "./engine.js";
+import { BubbleGame, COLORS, COLS, DIFFICULTIES, MAX_LEVELS, reflectHorizontal } from "./engine.js";
 
 const STORAGE_KEY = "bubble-bloom-progress-v1";
 const colorMap = new Map(COLORS.map((color) => [color.id, color]));
@@ -250,13 +250,10 @@ function drawAimGuide() {
   const minX = metrics.radius;
   const maxX = metrics.width - metrics.radius;
   for (let distance = metrics.radius * 2.2; distance < length; distance += metrics.radius * 1.25) {
-    let nextX = x + vx * metrics.radius * 1.25;
+    const horizontal = reflectHorizontal(x, vx, metrics.radius * 1.25, minX, maxX);
+    x = horizontal.position;
+    vx = horizontal.velocity;
     y += vy * metrics.radius * 1.25;
-    if (nextX < minX || nextX > maxX) {
-      vx *= -1;
-      nextX = Math.min(maxX, Math.max(minX, nextX));
-    }
-    x = nextX;
     context.beginPath();
     context.arc(x, y, Math.max(1.5, metrics.radius * 0.1), 0, Math.PI * 2);
     context.fill();
@@ -282,13 +279,17 @@ function fire() {
 
 function updateProjectile(delta) {
   if (!projectile) return;
-  projectile.x += projectile.vx * delta;
+  const horizontal = reflectHorizontal(
+    projectile.x,
+    projectile.vx,
+    delta,
+    metrics.radius,
+    metrics.width - metrics.radius
+  );
+  projectile.x = horizontal.position;
+  projectile.vx = horizontal.velocity;
   projectile.y += projectile.vy * delta;
-  if (projectile.x <= metrics.radius || projectile.x >= metrics.width - metrics.radius) {
-    projectile.x = Math.min(metrics.width - metrics.radius, Math.max(metrics.radius, projectile.x));
-    projectile.vx *= -1;
-    playTone(170, 0.025);
-  }
+  if (horizontal.bounced) playTone(170, 0.025);
 
   const collision = projectile.y <= metrics.top ||
     game.bubbles.some((bubble) => {

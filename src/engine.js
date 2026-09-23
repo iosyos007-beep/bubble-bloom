@@ -39,6 +39,37 @@ export function neighbors(row, col) {
   return offsets.map(([rowOffset, colOffset]) => [row + rowOffset, col + colOffset]);
 }
 
+export function reflectHorizontal(position, velocity, elapsed, min, max) {
+  if (!(max > min) || elapsed < 0) {
+    throw new RangeError("Horizontal reflection requires valid bounds and elapsed time.");
+  }
+
+  let nextPosition = position + velocity * elapsed;
+  let nextVelocity = velocity;
+  let bounced = false;
+
+  while (nextPosition < min || nextPosition > max) {
+    if (nextPosition < min) {
+      nextPosition = min + (min - nextPosition);
+      nextVelocity = Math.abs(nextVelocity);
+    } else {
+      nextPosition = max - (nextPosition - max);
+      nextVelocity = -Math.abs(nextVelocity);
+    }
+    bounced = true;
+  }
+
+  if (nextPosition === min && nextVelocity < 0) {
+    nextVelocity = Math.abs(nextVelocity);
+    bounced = true;
+  } else if (nextPosition === max && nextVelocity > 0) {
+    nextVelocity = -Math.abs(nextVelocity);
+    bounced = true;
+  }
+
+  return { position: nextPosition, velocity: nextVelocity, bounced };
+}
+
 export class BubbleGame {
   constructor({ level = 1, difficulty = "relaxed", inventory } = {}) {
     if (!DIFFICULTIES[difficulty]) {

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { BubbleGame, DIFFICULTIES, neighbors } from "../src/engine.js";
+import { BubbleGame, DIFFICULTIES, neighbors, reflectHorizontal } from "../src/engine.js";
 
 test("creates deterministic playable boards for every difficulty", () => {
   for (const difficulty of Object.keys(DIFFICULTIES)) {
@@ -16,6 +16,27 @@ test("hex cells always have six neighbor positions", () => {
   assert.equal(neighbors(0, 0).length, 6);
   assert.equal(neighbors(1, 1).length, 6);
   assert.notDeepEqual(neighbors(0, 1), neighbors(1, 1));
+});
+
+test("wall collisions preserve overshoot and reverse horizontal velocity", () => {
+  assert.deepEqual(reflectHorizontal(15, -100, 0.1, 10, 110), {
+    position: 15,
+    velocity: 100,
+    bounced: true
+  });
+  assert.deepEqual(reflectHorizontal(105, 100, 0.1, 10, 110), {
+    position: 105,
+    velocity: -100,
+    bounced: true
+  });
+});
+
+test("long frames can cross multiple walls without pinning the projectile", () => {
+  assert.deepEqual(reflectHorizontal(50, 300, 1, 0, 100), {
+    position: 50,
+    velocity: -300,
+    bounced: true
+  });
 });
 
 test("a three-bubble color cluster is removed", () => {
