@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+    <meta name="theme-color" content="#172554">
+    <meta name="description" content="A relaxing, ad-free bubble shooter that works offline.">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="assets/icon.svg">
+    <link rel="stylesheet" href="styles.css">
+    <title>Bubble Bloom</title>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <button id="homeButton" class="icon-button" aria-label="Return to level map">⌂</button>
+        <div class="level-title">
+          <span id="levelLabel">Level 1</span>
+          <span id="difficultyLabel">Relaxed</span>
+        </div>
+        <button id="soundButton" class="icon-button" aria-label="Toggle sound">♪</button>
+      </header>
+
+      <main>
+        <section id="menuScreen" class="screen menu-screen active" aria-labelledby="gameTitle">
+          <div class="hero">
+            <span class="eyebrow">AD-FREE • OFFLINE</span>
+            <h1 id="gameTitle">Bubble<br><strong>Bloom</strong></h1>
+            <p>Pop, collect, and climb through colorful worlds.</p>
+          </div>
+
+          <div class="menu-card">
+            <label for="difficultySelect">Difficulty</label>
+            <div class="select-wrap">
+              <select id="difficultySelect">
+                <option value="relaxed">Relaxed</option>
+                <option value="classic">Classic</option>
+                <option value="expert">Expert</option>
+              </select>
+            </div>
+            <button id="continueButton" class="primary-button">Play level 1</button>
+            <button id="levelSelectButton" class="secondary-button">Choose a level</button>
+            <p class="save-note">Progress is saved automatically on this device.</p>
+          </div>
+        </section>
+
+        <section id="levelsScreen" class="screen levels-screen" aria-labelledby="levelsTitle">
+          <div class="section-heading">
+            <button id="levelsBackButton" class="back-button" aria-label="Back">‹</button>
+            <div>
+              <span class="eyebrow">YOUR JOURNEY</span>
+              <h2 id="levelsTitle">Choose a level</h2>
+            </div>
+          </div>
+          <div id="levelGrid" class="level-grid"></div>
+        </section>
+
+        <section id="gameScreen" class="screen game-screen" aria-label="Bubble shooter game">
+          <div class="hud">
+            <div class="hud-item"><span>Score</span><strong id="scoreValue">0</strong></div>
+            <div class="mission">
+              <span>Clear the board</span>
+              <div class="progress-track"><i id="levelProgress"></i></div>
+            </div>
+            <div class="hud-item right"><span>Shots</span><strong id="shotsValue">0</strong></div>
+          </div>
+
+          <div id="gameStage" class="game-stage">
+            <canvas id="gameCanvas" aria-label="Aim and tap to shoot bubbles"></canvas>
+            <div id="toast" class="toast" role="status" aria-live="polite"></div>
+          </div>
+
+          <div class="power-bar" aria-label="Power-ups">
+            <button class="power-button" data-power="bomb">
+              <span class="power-icon bomb-icon">✹</span>
+              <span>Bomb</span>
+              <b id="bombCount">0</b>
+            </button>
+            <button class="power-button" data-power="rainbow">
+              <span class="power-icon rainbow-icon">●</span>
+              <span>Rainbow</span>
+              <b id="rainbowCount">0</b>
+            </button>
+            <button class="power-button" data-power="aim">
+              <span class="power-icon aim-icon">⌖</span>
+              <span>Long aim</span>
+              <b id="aimCount">0</b>
+            </button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="resultDialog" class="result-dialog">
+      <div id="resultBadge" class="result-badge">★</div>
+      <span id="resultEyebrow" class="eyebrow">LEVEL COMPLETE</span>
+      <h2 id="resultTitle">Brilliant!</h2>
+      <p id="resultMessage">You cleared the whole board.</p>
+      <div class="result-score"><span>Score</span><strong id="resultScore">0</strong></div>
+      <button id="nextButton" class="primary-button">Next level</button>
+      <button id="retryButton" class="secondary-button">Play again</button>
+      <button id="mapButton" class="text-button">Level map</button>
+    </dialog>
+
+    <script type="module" src="src/app.js"></script>
+  </body>
+</html>
